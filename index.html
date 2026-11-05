@@ -135,6 +135,11 @@ nav.tabs button[aria-current="page"] { color: var(--pit); background: #10272a; }
 .tr-tbl .tr-off { opacity: .5; }
 .tr-loss { margin: 4px 0 8px; padding-left: 18px; font-size: 14.5px; line-height: 1.5; }
 .tr-file input { display: none; }
+.tr-zoom { display: flex; align-items: center; gap: 5px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px 8px; padding: 0 16px; }
+.tr-zoom::-webkit-scrollbar { display: none; }
+.tr-zoom span { font-size: 13px; color: var(--ink2); margin-right: 3px; }
+.tr-zoom .chip { min-height: 30px; min-width: 34px; padding: 0 9px; font-size: 13.5px; }
+.tr-chip.ext b { color: #c9a2ff; }
 
 /* TR-CSS:end */
 </style>
@@ -268,13 +273,13 @@ const TR = (() => {
       for (let i = W; i < N - W; i++) {
         let isMin = true, isMax = true, lo = Infinity, hi = -Infinity;
         for (let j = i - W; j <= i + W; j++) { if (s[j] < s[i]) isMin = false; if (s[j] > s[i]) isMax = false; lo = Math.min(lo, s[j]); hi = Math.max(hi, s[j]); }
-        if ((isMin || isMax) && hi - lo >= 4) pts.push(i);
+        if ((isMin || isMax) && hi - lo >= 4) pts.push({ i, t: isMin ? 'min' : 'max' });
       }
     }
     let keep = [];
-    pts.forEach(i => { const d = ref.d[i]; if (d < 25 || ref.len - d < 25) return; if (keep.length && d - ref.d[keep[keep.length - 1]] < 35) return; keep.push(i); });
-    if (keep.length < 3) { keep = []; for (let k = 1; k < 8; k++) keep.push(Math.round(idxAtFrac(ref, k / 8))); }
-    return keep.map(i => ({ i, f: ref.d[i] / ref.len, lat: ref.gps ? ref.lat[i] : null, lon: ref.gps ? ref.lon[i] : null }));
+    pts.forEach(p => { const d = ref.d[p.i]; if (d < 25 || ref.len - d < 25) return; if (keep.length && d - ref.d[keep[keep.length - 1].i] < 35) return; keep.push(p); });
+    if (keep.length < 3) { keep = []; for (let k = 1; k < 8; k++) keep.push({ i: Math.round(idxAtFrac(ref, k / 8)), t: null }); }
+    return keep.map(p => ({ i: p.i, t: p.t, f: ref.d[p.i] / ref.len, lat: ref.gps ? ref.lat[p.i] : null, lon: ref.gps ? ref.lon[p.i] : null }));
   }
   const M_LAT = 110540;
   function nearIdx(L, p, ref) {
@@ -330,6 +335,25 @@ const TR = (() => {
     S.rolling = roll;
     return { pts, rows, nS, stats: S, ref };
   }
+  /** every corner of the reference lap (its speed minima): per lap the speed in (top before it), at the slowest point and out (top after it) */
+  function corners(sp) {
+    const ref = sp.ref, pts = sp.pts, ap = pts.map((p, j) => ({ p, j })).filter(x => x.p.t === 'min');
+    if (!ap.length || !ref.spd) return null;
+    const rows = sp.rows.map(r => {
+      const L = r.lap, idx = pts.map(p => nearIdx(L, p, ref)), out = { lap: L, entry: [], min: [], exit: [] };
+      ap.forEach(({ j }) => {
+        const a = Math.round(idx[j]), lo = j ? Math.round(idx[j - 1]) : Math.max(0, a - Math.round(L.hz * 4)), hi = j + 1 < idx.length ? Math.round(idx[j + 1]) : Math.min(L.N - 1, a + Math.round(L.hz * 4));
+        const w = Math.max(2, Math.round(L.hz * 0.8)); let mn = Infinity, en = -Infinity, ex = -Infinity;
+        for (let i = Math.max(0, a - w); i <= Math.min(L.N - 1, a + w); i++) mn = Math.min(mn, L.spd[i]);
+        for (let i = Math.max(0, lo); i <= a; i++) en = Math.max(en, L.spd[i]);
+        for (let i = a; i <= Math.min(L.N - 1, hi); i++) ex = Math.max(ex, L.spd[i]);
+        out.min.push(mn); out.entry.push(en); out.exit.push(ex);
+      });
+      return out;
+    });
+    const best = key => ap.map((x, c) => Math.max(...rows.map(r => r[key][c])));
+    return { ap: ap.map(x => x.j), rows, best: { min: best('min'), entry: best('entry'), exit: best('exit') } };
+  }
   /** where the time goes: sectors by median − best, and the reference lap's own losses */
   function losses(sp) {
     const S = sp.stats, byMed = S.med.map((m, k) => ({ k, loss: m - S.best[k], sd: S.sd[k] })).sort((a, b) => b.loss - a.loss);
@@ -350,35 +374,41 @@ const TR = (() => {
 
   /* ---- drawing (SVG strings; viewBox width 1000) ---- */
   const W = 1000;
-  function pathOf(L, arr, lo, hi, H, top, step) {
+  function pathOf(L, arr, lo, hi, H, top, step, z) {
     if (!arr) return '';
-    const span = hi - lo || 1; let s = '';
-    for (let i = 0; i < L.N; i += step) { const x = L.d[i] / L.len * W, y = top + H - (arr[i] - lo) / span * H; s += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }
+    z = z || [0, 1];
+    const span = hi - lo || 1, zw = z[1] - z[0]; let s = '', first = true;
+    for (let i = 0; i < L.N; i += step) {
+      const f = L.d[i] / L.len; if (f < z[0] - 0.01 || f > z[1] + 0.01) continue;
+      const x = (f - z[0]) / zw * W, y = top + H - (arr[i] - lo) / span * H; s += (first ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1); first = false;
+    }
     return s;
   }
+  const part = (L, a, z) => { if (!a || !z || (z[0] <= 0 && z[1] >= 1)) return a; const i0 = Math.floor(idxAtFrac(L, z[0])), i1 = Math.ceil(idxAtFrac(L, z[1])); return a.slice(i0, i1 + 1); };
   function range(arrs, pad) { let lo = Infinity, hi = -Infinity; arrs.forEach(a => { if (a) for (let i = 0; i < a.length; i++) { if (a[i] < lo) lo = a[i]; if (a[i] > hi) hi = a[i]; } }); if (!Number.isFinite(lo)) return [0, 1]; const p = (hi - lo) * (pad || 0.06) || 1; return [lo - p, hi + p]; }
   /** stacked panels: delta (when comparing) and the chosen channels, a cursor line in each */
-  function tdSvg(r, c, chans) {
-    const step = Math.max(1, Math.round(r.N / 900)), panels = [];
+  function tdSvg(r, c, chans, z) {
+    z = z || [0, 1];
+    const step = z[1] - z[0] < 0.5 ? 1 : Math.max(1, Math.round(r.N / 900)), panels = [];
     if (c) panels.push({ k: 'delta', name: 'Δέλτα', unit: 's', a: delta(r, c), h: 90 });
     chans.forEach(k => { if (r[k] || (c && c[k])) panels.push({ k, name: CH[k][0], unit: CH[k][1], h: k === 'spd' || k === 'rpm' ? 150 : 110 }); });
     let y = 0, body = '';
     panels.forEach(P => {
       const top = y + 6, H = P.h - 12;
       if (P.k === 'delta') {
-        const [lo0, hi0] = range([P.a], 0.1), m = Math.max(Math.abs(lo0), Math.abs(hi0), 0.05), lo = -m, hi = m, zy = top + H - (0 - lo) / (hi - lo) * H;
+        const [lo0, hi0] = range([part(r, P.a, z)], 0.1), m = Math.max(Math.abs(lo0), Math.abs(hi0), 0.05), lo = -m, hi = m, zy = top + H - (0 - lo) / (hi - lo) * H;
         body += `<g><rect x="0" y="${y}" width="${W}" height="${P.h}" class="tr-bg"/><line x1="0" x2="${W}" y1="${zy.toFixed(1)}" y2="${zy.toFixed(1)}" class="tr-zero"/>`;
-        body += `<path d="${pathOf(r, P.a, lo, hi, H, top, step)}" class="tr-dl"/><text x="8" y="${y + 18}" class="tr-lab">Δέλτα (s) · πάνω = πιο αργός</text><text x="${W - 8}" y="${y + 18}" class="tr-lab end">±${fx(m, 2)}</text></g>`;
+        body += `<path d="${pathOf(r, P.a, lo, hi, H, top, step, z)}" class="tr-dl"/><text x="8" y="${y + 18}" class="tr-lab">Δέλτα (s) · πάνω = πιο αργός</text><text x="${W - 8}" y="${y + 18}" class="tr-lab end">±${fx(m, 2)}</text></g>`;
       } else {
-        const [lo, hi] = range([r[P.k], c && c[P.k]]);
+        const [lo, hi] = range([part(r, r[P.k], z), c && part(c, c[P.k], z)]);
         body += `<g><rect x="0" y="${y}" width="${W}" height="${P.h}" class="tr-bg"/>`;
-        if (c && c[P.k]) body += `<path d="${pathOf(c, c[P.k], lo, hi, H, top, step)}" class="tr-cmp"/>`;
-        if (r[P.k]) body += `<path d="${pathOf(r, r[P.k], lo, hi, H, top, step)}" class="tr-ref"/>`;
+        if (c && c[P.k]) body += `<path d="${pathOf(c, c[P.k], lo, hi, H, top, step, z)}" class="tr-cmp"/>`;
+        if (r[P.k]) body += `<path d="${pathOf(r, r[P.k], lo, hi, H, top, step, z)}" class="tr-ref"/>`;
         body += `<text x="8" y="${y + 18}" class="tr-lab">${esc(P.name)} (${esc(P.unit)})</text><text x="${W - 8}" y="${y + 18}" class="tr-lab end">${fx(hi, CH[P.k][2])}</text><text x="${W - 8}" y="${y + P.h - 6}" class="tr-lab end">${fx(lo, CH[P.k][2])}</text></g>`;
       }
       y += P.h + 4;
     });
-    return { svg: `<svg class="tr-svg" viewBox="0 0 ${W} ${y}" preserveAspectRatio="none" style="height:${Math.round(y * 0.42)}px">${body}<line class="tr-cur" x1="-10" x2="-10" y1="0" y2="${y}"/></svg>`, panels };
+    return { svg: `<svg class="tr-svg" viewBox="0 0 ${W} ${y}" preserveAspectRatio="none" data-z0="${z[0]}" data-z1="${z[1]}" style="height:${Math.round(y * 0.42)}px">${body}<line class="tr-cur" x1="-10" x2="-10" y1="0" y2="${y}"/></svg>`, panels };
   }
   /** the track from the reference lap's GPS, coloured by speed; the compared lap thin; sector numbers */
   function mapSvg(r, c, pts, opts = {}) {
@@ -417,7 +447,7 @@ const TR = (() => {
     const dots = L.map((x, j) => `<circle cx="${X(j).toFixed(1)}" cy="${Y(x.time).toFixed(1)}" r="6" class="${x.time === lo ? 'tr-best' : 'tr-pt'}"/>`).join('');
     return `<svg class="tr-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:120px"><rect x="0" y="0" width="${W}" height="${H}" class="tr-bg"/><path d="${d}" class="tr-ref"/>${dots}<text x="8" y="16" class="tr-lab">πιο γρήγορα πάνω · ${lapT(lo)} – ${lapT(hi)}</text></svg>`;
   }
-  return { SC, CH, enc, dec, build, lapsOf, real, bestLap, idxAtFrac, valAt, splits, losses, delta, report, tdSvg, mapSvg, mapPoint, lapsSvg, esc, fx, lapT, secT };
+  return { SC, CH, enc, dec, build, lapsOf, real, bestLap, idxAtFrac, valAt, splits, losses, corners, delta, report, tdSvg, mapSvg, mapPoint, lapsSvg, esc, fx, lapT, secT };
 })();
 /* TR:end */
 
@@ -712,7 +742,7 @@ function engRead() {
 
 /* ---------- Δεδομένα: a session's samples (public.kart_traces), the same screens as SC's Karting → Δεδομένα ---------- */
 const TRC = { cache: {}, busy: {}, err: {}, ui: {} };
-const TR_TABS = [['td', 'Χρόνος–Απόσταση'], ['splits', 'Sectors'], ['channels', 'Κανάλια'], ['map', 'Χάρτης']];
+const TR_TABS = [['td', 'Χρόνος–Απόσταση'], ['splits', 'Sectors'], ['corners', 'Στροφές'], ['channels', 'Κανάλια'], ['map', 'Χάρτης']];
 const trChans = () => { const v = LS.get('scc-tr-ch', null); return Array.isArray(v) && v.length ? v : ['spd', 'rpm']; };
 function trLoad(id) {
   if (TRC.cache[id] || TRC.busy[id]) return;
@@ -752,6 +782,10 @@ function viewData() {
       <ul class="tr-loss">${Lo.ofRef.filter(x => x.loss > 0.005).slice(0, 3).map(x => `<li><b>Sector ${x.k + 1}</b>: ο γύρος ${sp.ref.n} χάνει ${TR.fx(x.loss, 3)}${x.from ? ` (το καλύτερο στον γύρο ${x.from.lap.n})` : ''}</li>`).join('')}${Lo.byMed.filter(x => x.loss > 0.01).slice(0, 3).map(x => `<li><b>Sector ${x.k + 1}</b>: συνήθως ${TR.fx(x.loss, 3)} πιο αργός, διασπορά ${TR.fx(x.sd, 3)}</li>`).join('')}</ul>
       <div class="tr-tblw"><table class="tr-tbl"><tr><th>Γύρος</th>${Array.from({ length: nS }, (_, j) => `<th>${j + 1}</th>`).join('')}</tr>${sp.rows.map(r => `<tr class="${r.lap === ref ? 'tr-rref' : r.lap === cmp ? 'tr-rcmp' : ''}"><th>${TR.lapT(r.lap.time)} <small>Γ${r.lap.n}</small></th>${r.split.map(cell).join('')}</tr>`).join('')}${foot}</table></div>
       <div class="tr-mini">${TR.mapSvg(ref, null, sp.pts, { big: true })}</div></section>`;
+  } else if (tab === 'corners') {
+    const C = sp && TR.corners(sp);
+    const tbl = (key, title) => `<h3>${title}</h3><div class="tr-tblw"><table class="tr-tbl"><tr><th>Γύρος</th>${C.ap.map(j => `<th>Σ${j + 1}</th>`).join('')}</tr>${C.rows.map(r => `<tr class="${r.lap === ref ? 'tr-rref' : r.lap === cmp ? 'tr-rcmp' : ''}"><th>${TR.lapT(r.lap.time)} <small>Γ${r.lap.n}</small></th>${r[key].map((v, c) => `<td class="${Math.abs(v - C.best[key][c]) < 0.05 ? 'tr-b' : ''}">${TR.fx(v, 0)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+    h += C ? `<section class="card">${tbl('min', 'Ελάχιστη ταχύτητα (km/h)')}${tbl('exit', 'Ταχύτητα εξόδου (km/h)')}${tbl('entry', 'Ταχύτητα εισόδου (km/h)')}<div class="tr-mini">${TR.mapSvg(ref, null, sp.pts, { big: true })}</div></section>` : '<section class="card"><p class="muted">Χωρίς ταχύτητα GPS.</p></section>';
   } else if (tab === 'channels') {
     const rep = TR.report(laps), has = c => rep.some(x => x[c] !== null && x[c] !== undefined);
     const cols = [['time', 'Χρόνος', x => TR.lapT(x.time)], ['len', 'm', x => TR.fx(x.len, 1)], ['rpm', 'Μέγ. στροφές', x => TR.fx(x.rpm, 0)], ['top', 'Μέγ. km/h', x => TR.fx(x.top, 1)], ['min', 'Ελάχ. km/h', x => TR.fx(x.min, 1)], ['gy', 'Πλευρικά g', x => TR.fx(x.gy, 2)], ['egt', 'EGT', x => TR.fx(x.egt, 0)], ['water', 'Νερό', x => TR.fx(x.water, 0)]].filter(c => c[0] === 'time' || c[0] === 'len' || has(c[0]));
