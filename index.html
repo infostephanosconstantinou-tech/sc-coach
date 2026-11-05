@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SC Coach">
+<meta name="theme-color" content="#0b0d0e">
+<meta name="robots" content="noindex">
+<title>SC Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;600;800&display=swap">
+<style>
+/* SC Coach: the karting part of Stefanos' app SC for his coach. Black with the Karting cyan, like the app. */
+:root {
+  --bg: #0b0d0e; --board: #14181a; --edge: #262d31; --ink: #eef2f1; --ink2: #b4bec2; --ink3: #7c878c;
+  --pit: #4fd6e0; --pit-ink: #04181a; --good: #5fcf86; --warn: #e6b34f; --bad: #ff7a6e; --best: #b99cff;
+  --font: "Commissioner", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--font); -webkit-text-size-adjust: 100%; }
+body { padding: env(safe-area-inset-top, 0px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 84px) max(16px, env(safe-area-inset-left, 0px)); }
+main { max-width: 640px; margin: 0 auto; display: grid; gap: 16px; padding-top: 14px; }
+h1 { font-size: 26px; font-weight: 800; margin: 0; line-height: 1.1; }
+h2 { font-size: 19px; font-weight: 800; margin: 0 0 10px; }
+h3 { font-size: 15px; margin: 12px 0 6px; color: var(--ink2); }
+p { margin: 0; }
+.muted { color: var(--ink3); }
+.small { font-size: 14px; }
+.t { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.card { background: var(--board); border: 1px solid var(--edge); border-radius: 18px; padding: 16px; display: grid; gap: 10px; min-width: 0; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mark { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--pit); display: grid; place-items: center; font-weight: 800; position: relative; flex: none; }
+.mark::after { content: ""; position: absolute; top: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
+button, input, select, textarea { font: inherit; color: inherit; }
+.btn { appearance: none; border: 0; border-radius: 999px; padding: 11px 18px; background: var(--pit); color: var(--pit-ink); font-weight: 700; cursor: pointer; min-height: 44px; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--edge); }
+.btn:disabled { opacity: .5; }
+.link { appearance: none; background: none; border: 0; color: var(--pit); font-weight: 600; padding: 6px 0; cursor: pointer; }
+label { display: grid; gap: 6px; font-size: 14px; color: var(--ink2); }
+input, select, textarea { width: 100%; background: #0f1315; border: 1px solid var(--edge); border-radius: 12px; padding: 11px 12px; color: var(--ink); min-height: 44px; }
+textarea { resize: vertical; min-height: 88px; }
+input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--pit); outline-offset: 1px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.row > * { flex: 1 1 140px; min-width: 0; }
+.err { color: var(--bad); font-size: 14px; }
+.ok { color: var(--good); font-size: 14px; }
+.races { display: grid; gap: 10px; }
+.race { border-left: 3px solid var(--pit); padding-left: 12px; }
+.race b { font-size: 17px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { appearance: none; border: 1px solid var(--edge); background: transparent; border-radius: 999px; padding: 7px 13px; min-height: 38px; color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--pit); border-color: var(--pit); color: var(--pit-ink); font-weight: 700; }
+.day { border-top: 1px solid var(--edge); padding-top: 10px; display: grid; gap: 8px; }
+.day:first-child { border-top: 0; padding-top: 0; }
+.dayhead { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.sess { background: #0f1315; border: 1px solid var(--edge); border-radius: 14px; padding: 10px 12px; display: grid; gap: 6px; }
+.sess summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.sess summary::-webkit-details-marker { display: none; }
+.lap { font-size: 20px; font-weight: 800; }
+.best { color: var(--best); }
+.laps { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 14px; }
+.laps .fake { color: var(--ink3); text-decoration: line-through; }
+.laps .slow { color: var(--ink3); }
+.laps .b { color: var(--best); font-weight: 700; }
+.note { border-left: 3px solid var(--warn); padding: 6px 0 6px 10px; display: grid; gap: 2px; }
+.note .kind { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--warn); font-weight: 700; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--edge); white-space: nowrap; }
+th { color: var(--ink3); font-size: 12px; font-weight: 600; }
+td.r, th.r { text-align: right; }
+.msgs { display: grid; gap: 8px; max-height: 360px; overflow-y: auto; }
+.msg { padding: 9px 12px; border-radius: 14px; max-width: 88%; white-space: pre-wrap; }
+.msg.me { background: #11343a; justify-self: end; }
+.msg.coach { background: #1c2124; }
+.msg small { display: block; color: var(--ink3); font-size: 12px; margin-top: 2px; }
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(11,13,14,.96); border-top: 1px solid var(--edge); display: flex; justify-content: center; gap: 4px; padding: 8px max(8px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+nav.tabs button { appearance: none; background: none; border: 0; color: var(--ink3); padding: 8px 4px; font-size: 14px; border-radius: 12px; font-weight: 600; flex: 1; max-width: 140px; min-height: 44px; cursor: pointer; }
+nav.tabs button[aria-current="page"] { color: var(--pit); background: #10272a; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="app"><p class="muted">Φορτώνει…</p></main>
+<nav class="tabs" id="tabs" hidden>
+  <button data-tab="days">Μέρες</button>
+  <button data-tab="records">Ρεκόρ</button>
+  <button data-tab="notes">Σημειώσεις</button>
+  <button data-tab="chat">Chat</button>
+  <button data-tab="ask">Ερωτήσεις</button>
+</nav>
+<script>
+'use strict';
+/* SC Coach — Stefanos' karting for his coach (Dimos), 05/11/2026. Source: race-coach/coach/index.html.
+   Reads public.docs through Supabase with the coach's own login: the database lets a coach read collection 'kart',
+   settings/kart and collection 'coach' (coach/weight = a trigger's copy of only Stefanos' weigh-ins), add and change
+   'kart' and settings/kart (never delete), and write 'coach' (RLS, public.coaches). */
+const SB_URL = 'https://fzmxoduyehcipgkughpn.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6bXhvZHV5ZWhjaXBna3VnaHBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTkxNDgsImV4cCI6MjEwOTA5NTE0OH0.YqlmBIwsucd_EElw-pcrWghf3LzAveIwgn6u4P20BaQ';
+const LS = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} } };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const DOW = ['Κυρ', 'Δευ', 'Τρί', 'Τετ', 'Πέμ', 'Παρ', 'Σάβ'];
+const dm = s => { const [y, m, d] = String(s || '').split('-').map(Number); if (!y) return ''; const dt = new Date(y, m - 1, d, 12); return `${DOW[dt.getDay()]} ${d}/${m}`; };
+const lapFmt = v => { if (v === null || v === undefined || !isFinite(v)) return '—'; const m = Math.floor(v / 60), s = v - m * 60; return (m ? `${m}:${s.toFixed(3).padStart(6, '0')}` : v.toFixed(3)).replace('.', ','); };
+const f3 = v => v.toFixed(3).replace('.', ',');
+const KART = { iame: 'IAME', rotax: 'Rotax' };
+const SETUP_F = [['gear', 'Γρανάζια'], ['pc', 'Πίεση κρύα'], ['ph', 'Πίεση ζεστή'], ['tyres', 'Λάστιχα'], ['jet', 'Ζιγκλέρ'], ['air', 'Αέρας °C'], ['axle', 'Άξονας'], ['rear', 'Πίσω πλάτος'], ['front', 'Μπροστά πλάτος']];
+const KIND = { setup: 'Setup', pressure: 'Πιέσεις', tech: 'Τεχνική', comment: 'Σχόλιο' };
+const trackLabel = t => String(t || 'Πίστα;').replace(/^DaytonaK\s*/i, 'Daytona ').replace(/^DAYTONA$/, 'Daytona').replace(/^Daytona STEF$/i, 'Daytona (STEF)');
+const nowIso = () => { const d = new Date(), o = -d.getTimezoneOffset(), s = o >= 0 ? '+' : '-'; return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}${s}${pad(Math.floor(Math.abs(o) / 60))}:${pad(Math.abs(o) % 60)}`; };
+const hm = s => { const d = new Date(s); return isNaN(d) ? '' : `${d.getDate()}/${d.getMonth() + 1} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+
+/* ---------- auth ---------- */
+const Auth = {
+  s: LS.get('scc-session', null),
+  async token(grant, body) {
+    const r = await fetch(`${SB_URL}/auth/v1/token?grant_type=${grant}`, { method: 'POST', headers: { apikey: SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error_description || j.msg || 'login');
+    this.s = { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600), email: j.user && j.user.email };
+    LS.set('scc-session', this.s);
+  },
+  async fresh() {
+    if (!this.s) throw new Error('auth');
+    if (this.s.expires_at - 60 < Date.now() / 1000) await this.token('refresh_token', { refresh_token: this.s.refresh_token });
+    return this.s.access_token;
+  },
+  out() { this.s = null; LS.del('scc-session'); },
+};
+async function api(path, opts = {}) {
+  const tok = await Auth.fresh();
+  const r = await fetch(SB_URL + path, { method: opts.method || 'GET', headers: Object.assign({ apikey: SB_KEY, Authorization: `Bearer ${tok}`, 'Content-Type': 'application/json' }, opts.prefer ? { Prefer: opts.prefer } : {}), body: opts.body ? JSON.stringify(opts.body) : undefined });
+  if (r.status === 401) { Auth.out(); render(); throw new Error('auth'); }
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const txt = await r.text();
+  return txt ? JSON.parse(txt) : null;
+}
+async function pageAll(collection) {
+  let out = [], last = '';
+  for (let i = 0; i < 50; i++) {
+    const rows = await api(`/rest/v1/docs?select=id,data,updated_at&collection=eq.${collection}&order=id.asc&limit=1000${last ? `&id=gt.${encodeURIComponent(last)}` : ''}`);
+    out = out.concat(rows || []);
+    if (!rows || rows.length < 1000) break;
+    last = rows[rows.length - 1].id;
+  }
+  return out;
+}
+async function saveCoachDoc(id, data) {
+  await api('/rest/v1/docs?on_conflict=collection,id', { method: 'POST', prefer: 'resolution=merge-duplicates,return=minimal', body: [{ collection: 'coach', id, data }] });
+}
+
+/* ---------- the laps: a lap more than 3% faster than its session's median is a beacon cut, clean = within 7% of the best ---------- */
+function analyse(laps) {
+  const L = (laps || []).map(Number).filter(x => isFinite(x) && x > 0);
+  if (!L.length) return null;
+  const sorted = L.slice().sort((a, b) => a - b), med = sorted[Math.floor(sorted.length / 2)];
+  const fake = L.map(x => L.length >= 3 && x < med * 0.97);
+  const real = L.filter((x, i) => !fake[i]);
+  if (!real.length) return null;
+  const best = Math.min(...real), clean = real.filter(x => x <= best * 1.07);
+  const avg = clean.reduce((s, x) => s + x, 0) / clean.length;
+  const sd = clean.length > 1 ? Math.sqrt(clean.reduce((s, x) => s + (x - avg) ** 2, 0) / (clean.length - 1)) : 0;
+  return { L, fake, best, bi: L.indexOf(best), clean, avg, sd, cls: L.map((x, i) => fake[i] ? 'fake' : x === best ? 'b' : x > best * 1.07 ? 'slow' : '') };
+}
+
+/* ---------- state ---------- */
+const S = { tab: LS.get('scc-tab', 'days'), sessions: [], karts: {}, races: [], notes: [], chat: { sent: [], replies: [] }, weight: [], survey: null, days: 12, kart: 'all', err: '', busy: false };
+async function load() {
+  S.busy = true; S.err = ''; render();
+  try {
+    const [kart, coach, settings] = await Promise.all([pageAll('kart'), pageAll('coach'), api('/rest/v1/docs?select=id,data&collection=eq.settings&id=eq.kart')]);
+    S.sessions = kart.map(r => Object.assign({ _id: r.id }, r.data, { a: analyse(r.data.lapTimes) })).filter(k => k.date)
+      .sort((x, y) => (y.date + (y.time || '')).localeCompare(x.date + (x.time || '')));
+    S.karts = ((settings[0] || {}).data || {}).karts || {};
+    const byId = Object.fromEntries(coach.map(r => [r.id, r.data]));
+    S.races = ((byId.races || {}).races || []).filter(r => r.d >= new Date(Date.now() - 864e5).toISOString().slice(0, 10));
+    S.chat = Object.assign({ sent: [], replies: [] }, byId['chat-dimos'] || {});
+    S.weight = ((byId.weight || {}).series || []).filter(x => x && x.kg);
+    S.survey = byId['survey-dimos'] || null;
+    S.raw = Object.fromEntries(kart.map(r => [r.id, r.data])); S.settings = ((settings[0] || {}).data) || {};
+    S.notes = coach.filter(r => r.id.startsWith('n-')).map(r => Object.assign({ _id: r.id }, r.data)).sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  } catch (e) { if (e.message !== 'auth') S.err = 'Δεν φόρτωσαν τα δεδομένα. Έλεγξε τη σύνδεση και ξαναδοκίμασε.'; }
+  S.busy = false; render();
+}
+
+/* ---------- views ---------- */
+function viewLogin(msg) {
+  return `<section class="card" style="margin-top:12vh">
+    <div class="top"><div><h1>SC Coach</h1><p class="muted">Το karting του Στέφανου, για τον προπονητή του.</p></div><div class="mark">SC</div></div>
+    <form id="login" class="card" style="padding:0;border:0;background:none" autocomplete="on">
+      <label>Email<input id="email" type="email" inputmode="email" autocomplete="username" required value="${esc(render.email || LS.get('scc-email', ''))}"></label>
+      <label>Κωδικός (8 ψηφία)<input id="code" type="password" inputmode="numeric" autocomplete="current-password" pattern="[0-9]{8}" maxlength="8" required></label>
+      ${msg ? `<p class="err">${esc(msg)}</p>` : ''}
+      <button class="btn" type="submit">Σύνδεση</button>
+    </form></section>`;
+}
+function head() {
+  return `<div class="top"><div><h1>Στέφανος · Karting</h1><p class="muted small">${S.sessions.length.toLocaleString('el-GR')} sessions από το Race Studio</p></div><button class="link" id="refresh" aria-label="Ανανέωση">${S.busy ? 'Φορτώνει…' : 'Ανανέωση'}</button></div>
+    ${S.err ? `<p class="err">${esc(S.err)}</p>` : ''}`;
+}
+function weightCard() {
+  const W = S.weight; if (!W.length) return '';
+  const last = W[W.length - 1], wk = W.filter(x => x.d <= addD(last.d, -7)).pop();
+  const karts = S.karts || {};
+  const rows = S.races.map(r => {
+    const k = karts[r.kart] || {}, kk = Number(String(k.kg ?? '').replace(',', '.'));
+    if (!r.min) return '';
+    if (!isFinite(kk) || !kk) return `<li>${esc(dm(r.d))} ${esc(KART[r.kart] || '')}: ελάχιστο ${r.min} kg · <span class="muted">γράψε το βάρος του καρτ για να βγει το μολύβι</span></li>`;
+    const tot = last.kg + kk, need = r.min - tot;
+    return `<li>${esc(dm(r.d))} ${esc(KART[r.kart] || '')}: οδηγός ${f1(last.kg)} + καρτ ${f1(kk)} = <b class="t">${f1(tot)}</b> kg, ελάχιστο ${r.min} → ${need > 0 ? `<b class="t">μολύβι ${f1(need)} kg</b>` : `<span class="ok">πάνω από το ελάχιστο κατά ${f1(-need)} kg</span>`}</li>`;
+  }).join('');
+  return `<section class="card"><h2>Βάρος οδηγού</h2>
+    <div class="row" style="align-items:baseline"><span class="lap t">${f1(last.kg)} kg</span><span class="muted small">${esc(dm(last.d))}${wk ? ` · ${last.kg - wk.kg <= 0 ? '−' : '+'}${f1(Math.abs(last.kg - wk.kg))} σε μία εβδομάδα` : ''}</span></div>
+    <div class="laps t muted">${W.slice(-10).map(x => `<span>${esc(dm(x.d))}: ${f1(x.kg)}</span>`).join('')}</div>
+    ${rows ? `<ul class="notes" style="padding-left:18px;margin:0;display:grid;gap:6px">${rows}</ul>` : ''}
+    <form id="kartkg" class="row">${Object.entries(karts).map(([id, k]) => `<label>Βάρος καρτ ${esc(KART[id] || k.name || id)} (kg, χωρίς οδηγό)<input id="kg-${esc(id)}" data-kart-id="${esc(id)}" inputmode="decimal" value="${esc(k.kg ?? '')}"></label>`).join('')}<button class="btn ghost" type="submit">Κράτα τα βάρη των καρτ</button></form>
+    <p class="muted small">Μόνο τα κιλά του από τα ζυγίσματά του· ενημερώνεται μόνο του.</p></section>`;
+}
+const f1 = v => Number(v).toFixed(1).replace('.', ',');
+const addD = (d, n) => { const [y, m, dd] = d.split('-').map(Number), x = new Date(y, m - 1, dd + n, 12); return `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}`; };
+function racesCard() {
+  if (!S.races.length) return '';
+  return `<section class="card"><h2>Αγώνες</h2><div class="races">${S.races.map(r => `<div class="race"><b>${esc(dm(r.d))}</b> · ${esc(r.name || KART[r.kart] || '')}<br><span class="muted small">${esc(r.track || '')}${r.time ? ` · ${esc(r.time)}` : ''}${r.min ? ` · ελάχιστο ${esc(r.min)} kg` : ''}</span></div>`).join('')}</div></section>`;
+}
+function kartChips() {
+  const ks = [['all', 'Όλα'], ['iame', 'IAME'], ['rotax', 'Rotax']];
+  return `<div class="chips" role="group" aria-label="Καρτ">${ks.map(([k, t]) => `<button class="chip" data-kart="${k}" aria-pressed="${S.kart === k}">${t}</button>`).join('')}</div>`;
+}
+function notesFor(d) { return S.notes.filter(n => n.d === d); }
+function noteHtml(n) { return `<div class="note"><span class="kind">${esc(KIND[n.kind] || 'Σημείωση')}${n.d ? ` · ${esc(dm(n.d))}` : ''}</span><span>${esc(n.text)}</span><small class="muted">${esc(hm(n.at))}</small></div>`; }
+function sessHtml(k) {
+  const a = k.a, setup = k.setup ? Object.entries({ gear: 'γρανάζια', jet: 'ζιγκλέρ', pc: 'κρύα', ph: 'ζεστή', tyres: 'λάστιχα', air: 'αέρας °' }).filter(([f]) => k.setup[f]).map(([f, t]) => `${t} ${k.setup[f]}`).join(', ') : '';
+  return `<details class="sess"><summary><span><b>${esc(k.time || '')}</b> <span class="muted small">${a ? `${a.L.length} γύροι` : ''}${k.kart ? ` · ${esc(KART[k.kart] || k.kart)}` : ''}</span></span><span class="lap t">${a ? lapFmt(a.best) : esc(k.best || '—')}</span></summary>
+    ${a ? `<p class="small">Μέσος καθαρών <span class="t">${lapFmt(a.avg)}</span> · σταθερότητα <span class="t">±${f3(a.sd)}</span></p>
+    <div class="laps t">${a.L.map((x, i) => `<span class="${a.cls[i]}">${i + 1}: ${lapFmt(x)}</span>`).join('')}</div>` : ''}
+    ${a && a.fake.some(Boolean) ? '<p class="muted small">Διαγραμμένος: γύρος που έκοψε το beacon, δεν μετράει.</p>' : ''}
+    ${setup ? `<p class="small muted">Setup: ${esc(setup)}</p>` : ''}
+    <form class="sedit" data-sid="${esc(k._id)}"><div class="row">${SETUP_F.map(([f, t]) => `<label>${t}<input name="${f}" value="${esc((k.setup || {})[f] || '')}"></label>`).join('')}</div>
+      <label>Στροφή / τι έγινε<input name="corner" value="${esc(k.corner || '')}"></label>
+      <button class="btn ghost" type="submit">Κράτα το setup του session</button><span class="small sedit-msg"></span></form>${k.corner ? `<p class="small">Στροφή: ${esc(k.corner)}</p>` : ''}${k.note && k.note !== 'από Race Studio' ? `<p class="small muted">${esc(k.note)}</p>` : ''}
+    </details>`;
+}
+function viewDays() {
+  const list = S.sessions.filter(k => S.kart === 'all' || k.kart === S.kart);
+  const days = []; const seen = {};
+  list.forEach(k => { if (!seen[k.date]) { seen[k.date] = { d: k.date, s: [] }; days.push(seen[k.date]); } seen[k.date].s.push(k); });
+  const shown = days.slice(0, S.days);
+  return `${racesCard()}${weightCard()}<section class="card"><h2>Μέρες πίστας</h2>${kartChips()}
+    ${shown.map(day => {
+      const tracks = [...new Set(day.s.map(k => trackLabel(k.track)))].join(', ');
+      const as = day.s.map(k => k.a).filter(Boolean), best = as.length ? Math.min(...as.map(a => a.best)) : null;
+      return `<div class="day"><div class="dayhead"><span><b>${esc(dm(day.d))}</b> <span class="muted small">${esc(tracks)}</span></span>${best !== null ? `<span class="t">${lapFmt(best)}</span>` : ''}</div>
+        ${notesFor(day.d).map(noteHtml).join('')}
+        ${day.s.slice().reverse().map(sessHtml).join('')}
+        <button class="link" data-note-day="${day.d}">+ Σημείωση για αυτή τη μέρα</button></div>`;
+    }).join('') || '<p class="muted">Δεν υπάρχουν sessions.</p>'}
+    ${days.length > S.days ? `<button class="btn ghost" id="more">Περισσότερες μέρες (${days.length - S.days})</button>` : ''}</section>`;
+}
+function viewRecords() {
+  const g = {};
+  S.sessions.forEach(k => { if (!k.a || k.a.L.length < 3) return; const key = `${trackLabel(k.track)}|${k.kart || ''}`; (g[key] = g[key] || []).push(k); });
+  const rows = Object.entries(g).filter(([, xs]) => xs.length >= 2).map(([key, xs]) => {
+    const [track, kart] = key.split('|'), bests = xs.map(k => k.a.best).sort((a, b) => a - b), rec = xs.reduce((m, k) => k.a.best < m.a.best ? k : m, xs[0]);
+    return { track, kart, n: xs.length, best: bests[0], med: bests[Math.floor(bests.length / 2)], recD: rec.date, last: xs[0].date };
+  }).sort((a, b) => a.track.localeCompare(b.track) || a.kart.localeCompare(b.kart));
+  return `<section class="card"><h2>Ρεκόρ ανά διάταξη και καρτ</h2><p class="muted small">Καθαροί γύροι, sessions με 3+ γύρους. «Τυπικός» = ο διάμεσος των καλύτερων γύρων.</p>
+    <div class="tbl"><table><thead><tr><th>Διάταξη</th><th>Καρτ</th><th class="r">Sessions</th><th class="r">Καλύτερος</th><th class="r">Τυπικός</th><th>Ρεκόρ</th><th>Τελευταία</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${esc(r.track)}</td><td>${esc(KART[r.kart] || (r.kart ? r.kart : '—'))}</td><td class="r t">${r.n}</td><td class="r t best">${lapFmt(r.best)}</td><td class="r t">${lapFmt(r.med)}</td><td class="t">${esc(dm(r.recD))}</td><td class="t">${esc(dm(r.last))}</td></tr>`).join('')}</tbody></table></div>
+    <p class="muted small">Πριν από 11/2025 τα sessions δεν έχουν σημειωμένο καρτ (—).</p></section>`;
+}
+function viewNotes(dayPreset) {
+  const days = [...new Set(S.sessions.map(k => k.date))].slice(0, 30), races = S.races.map(r => r.d);
+  const opts = [...new Set([...races, ...days])].sort().reverse();
+  return `<section class="card"><h2>Νέα σημείωση</h2><p class="muted small">Ο Στέφανος τη βλέπει στο SC, στο Karting, και την παίρνει υπόψη ο AI μηχανικός του.</p>
+    <form id="note" class="card" style="padding:0;border:0;background:none">
+      <div class="row"><label>Τι είναι<select id="nkind">${Object.entries(KIND).map(([k, t]) => `<option value="${k}">${t}</option>`).join('')}</select></label>
+      <label>Για ποια μέρα<select id="nday"><option value="">Γενική</option>${opts.map(d => `<option value="${d}"${d === dayPreset ? ' selected' : ''}>${esc(dm(d))}${races.includes(d) ? ' · αγώνας' : ''}</option>`).join('')}</select></label></div>
+      <label>Σημείωση<textarea id="ntext" maxlength="2000" placeholder="π.χ. V1 με IAME: πίσω πλάτος 1395, πιέσεις κρύες 0,62 μπρος / 0,60 πίσω. Στη φουρκέτα φρένο νωρίτερα, βγες με γκάζι."></textarea></label>
+      <p id="nmsg" class="small" hidden></p>
+      <button class="btn" type="submit">Αποθήκευση</button>
+    </form></section>
+    <section class="card"><h2>Σημειώσεις</h2>${S.notes.map(noteHtml).join('') || '<p class="muted">Καμία ακόμα.</p>'}</section>`;
+}
+function viewChat() {
+  const msgs = [].concat(S.chat.sent.map(m => ({ at: m.at, text: m.text, me: true })), S.chat.replies.map(m => ({ at: m.at, text: m.text, me: false }))).sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  return `<section class="card"><h2>Chat με τον Coach του app</h2><p class="muted small">Γράψε προτάσεις για το karting του Στέφανου στο app: τι να δείχνει, τι να μετράει, τι να αλλάξει. Ο Coach απαντά εδώ (μέσα σε μία ώρα, 07:40–23:40) και ενημερώνει τον Στέφανο.</p>
+    <div class="msgs" id="msgs">${msgs.map(m => `<div class="msg ${m.me ? 'me' : 'coach'}">${esc(m.text)}<small>${m.me ? 'Εσύ' : 'Coach'} · ${esc(hm(m.at))}</small></div>`).join('') || '<p class="muted">Κανένα μήνυμα ακόμα.</p>'}</div>
+    <form id="chat" class="card" style="padding:0;border:0;background:none">
+      <label class="sr">Μήνυμα<textarea id="ctext" maxlength="2000" placeholder="π.χ. Θέλω να βλέπω τους τομείς κάθε γύρου στη V1."></textarea></label>
+      <p id="cmsg" class="small" hidden></p>
+      <button class="btn" type="submit">Αποστολή</button>
+    </form></section>`;
+}
+
+const ASK = [
+  ['first', 'Τι θέλεις να βλέπεις πρώτο όταν ανοίγεις το karting του Στέφανου;', 'one', ['Την τελευταία μέρα πίστας', 'Τον επόμενο αγώνα', 'Ρεκόρ και πρόοδο', 'Το βάρος και το μολύβι']],
+  ['metrics', 'Ποιες μετρήσεις σου είναι πιο χρήσιμες;', 'many', ['Καλύτερος γύρος', 'Μέσος όρος', 'Σταθερότητα (±)', 'Θεωρητικός καλύτερος από τομείς', 'Ελάχιστη ταχύτητα στις στροφές', 'Τελική ταχύτητα', 'RPM', 'Θερμοκρασίες νερού / EGT', 'Πιέσεις λάστιχων', 'Βάρος']],
+  ['setup', 'Τι setup θέλεις να γράφεται σε κάθε session;', 'many', ['Γρανάζια', 'Πιέσεις κρύες και ζεστές', 'Άξονας', 'Πλάτος μπρος / πίσω', 'Ύψος', 'Caster / camber', 'Θέση καθίσματος', 'Καρμπιρατέρ / ζιγκλέρ', 'Σετ λάστιχων και γύροι', 'Μολύβι']],
+  ['debrief', 'Μετά από κάθε session, πώς θέλεις να γίνεται η αναφορά;', 'one', ['Ο Στέφανος γράφει τι ένιωσε', 'Γράφω εγώ σχόλια', 'Αυτόματη ανάλυση από τον AI coach', 'Όλα μαζί']],
+  ['targets', 'Θέλεις να βάζεις στόχους χρόνου ανά πίστα και καρτ;', 'one', ['Ναι', 'Όχι']],
+  ['dayplan', 'Θέλεις πλάνο για κάθε μέρα πίστας (τι δουλεύουμε σε κάθε session);', 'one', ['Ναι, το γράφω εγώ', 'Ναι, να το προτείνει ο AI και να το διορθώνω', 'Όχι']],
+  ['video', 'Θα ήθελες να ανεβαίνει και video (onboard) στα sessions;', 'one', ['Ναι', 'Όχι', 'Ίσως αργότερα']],
+];
+function viewAsk() {
+  const last = S.survey && (S.survey.sent || []).slice(-1)[0];
+  const d = S.askDraft || (last ? JSON.parse(JSON.stringify(last)) : {});
+  S.askDraft = d;
+  return `<section class="card"><h2>Πώς θέλεις το karting του app</h2><p class="muted small">Οι απαντήσεις σου πάνε στον Coach του app, που φτιάχνει το karting του Στέφανου στα μέτρα σου και σου απαντά στο Chat.${last ? ` Τελευταία αποστολή: ${esc(hm(last.at))}.` : ''}</p>
+    <form id="ask" class="card" style="padding:0;border:0;background:none">
+    ${ASK.map(([id, q, kind, opts]) => `<fieldset style="border:0;padding:0;margin:0;display:grid;gap:8px"><legend style="font-weight:700;margin-bottom:6px">${esc(q)}</legend>
+      <div class="chips">${opts.map(o => { const on = kind === 'many' ? (d[id] || []).includes(o) : d[id] === o; return `<button type="button" class="chip" data-ask="${id}" data-kind="${kind}" data-v="${esc(o)}" aria-pressed="${on}">${esc(o)}</button>`; }).join('')}</div></fieldset>`).join('')}
+    <label>Τι άλλο θέλεις να έχει το app για να δουλεύουμε καλύτερα;<textarea id="ask-free" maxlength="2000">${esc(d.free || '')}</textarea></label>
+    <p id="amsg" class="small" hidden></p>
+    <button class="btn" type="submit">Αποστολή</button></form></section>`;
+}
+let notePreset = '';
+function render() {
+  const app = document.getElementById('app'), tabs = document.getElementById('tabs');
+  if (!Auth.s) { tabs.hidden = true; app.innerHTML = viewLogin(render.msg || ''); return; }
+  tabs.hidden = false;
+  tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === S.tab ? 'page' : 'false'));
+  const body = { days: viewDays, records: viewRecords, notes: () => viewNotes(notePreset), chat: viewChat, ask: viewAsk }[S.tab] || viewDays;
+  app.innerHTML = head() + body() + `<p class="muted small" style="text-align:center"><button class="link" id="logout">Αποσύνδεση</button></p>`;
+  const m = document.getElementById('msgs'); if (m) m.scrollTop = m.scrollHeight;
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.tab) { S.tab = t.dataset.tab; LS.set('scc-tab', S.tab); notePreset = ''; render(); window.scrollTo(0, 0); }
+  else if (t.dataset.kart) { S.kart = t.dataset.kart; render(); }
+  else if (t.dataset.noteDay) { notePreset = t.dataset.noteDay; S.tab = 'notes'; render(); window.scrollTo(0, 0); }
+  else if (t.dataset.ask) {
+    const d = S.askDraft = S.askDraft || {}, id = t.dataset.ask, v = t.dataset.v;
+    const fr = document.getElementById('ask-free'); if (fr) d.free = fr.value;
+    if (t.dataset.kind === 'many') { const a = d[id] = d[id] || []; const i = a.indexOf(v); if (i >= 0) a.splice(i, 1); else a.push(v); t.setAttribute('aria-pressed', String(i < 0)); }
+    else { d[id] = v; document.querySelectorAll(`[data-ask="${id}"]`).forEach(b => b.setAttribute('aria-pressed', String(b === t))); }
+  }
+  else if (t.id === 'more') { S.days += 12; render(); }
+  else if (t.id === 'refresh') load();
+  else if (t.id === 'logout') { Auth.out(); render(); }
+});
+document.addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === 'login') {
+    const email = f.querySelector('#email').value.trim().toLowerCase(), code = f.querySelector('#code').value.trim();
+    const btn = f.querySelector('button'); btn.disabled = true;
+    try { await Auth.token('password', { email, password: code }); LS.set('scc-email', email); render.msg = ''; render(); load(); }
+    catch (err) { render.email = email; render.msg = 'Λάθος email ή κωδικός. Δοκίμασε ξανά.'; render(); }
+    return;
+  }
+  if (f.id === 'note') {
+    const text = f.querySelector('#ntext').value.trim(), msg = f.querySelector('#nmsg');
+    if (!text) { msg.hidden = false; msg.className = 'err small'; msg.textContent = 'Γράψε τη σημείωση.'; return; }
+    const note = { at: nowIso(), by: 'dimos', kind: f.querySelector('#nkind').value, d: f.querySelector('#nday').value || null, text };
+    f.querySelector('button').disabled = true;
+    try { await saveCoachDoc(`n-${Date.now().toString(36)}`, note); S.notes.unshift(note); notePreset = ''; render(); const m2 = document.getElementById('nmsg'); if (m2) { m2.hidden = false; m2.className = 'ok small'; m2.textContent = 'Αποθηκεύτηκε.'; } }
+    catch (err) { f.querySelector('button').disabled = false; msg.hidden = false; msg.className = 'err small'; msg.textContent = 'Δεν αποθηκεύτηκε. Έλεγξε τη σύνδεση και ξαναδοκίμασε.'; }
+    return;
+  }
+  if (f.classList.contains('sedit')) {
+    const id = f.dataset.sid, cur = Object.assign({}, S.raw[id] || {}), su = Object.assign({}, cur.setup || {}), out = f.querySelector('.sedit-msg');
+    SETUP_F.forEach(([k]) => { const v = f.elements[k].value.trim(); if (v) su[k] = v; else delete su[k]; });
+    cur.setup = su; const c = f.elements.corner.value.trim(); if (c) cur.corner = c; else delete cur.corner;
+    cur.editedBy = 'dimos'; cur.editedAt = nowIso();
+    try { await api('/rest/v1/docs?on_conflict=collection,id', { method: 'POST', prefer: 'resolution=merge-duplicates,return=minimal', body: [{ collection: 'kart', id, data: cur }] }); S.raw[id] = cur; const k = S.sessions.find(x => x._id === id); if (k) { k.setup = su; k.corner = cur.corner; } out.className = 'ok small sedit-msg'; out.textContent = ' Κρατήθηκε.'; }
+    catch (err) { out.className = 'err small sedit-msg'; out.textContent = ' Δεν κρατήθηκε. Ξαναδοκίμασε.'; }
+    return;
+  }
+  if (f.id === 'kartkg') {
+    const st = JSON.parse(JSON.stringify(S.settings || {})); st.karts = st.karts || {};
+    f.querySelectorAll('[data-kart-id]').forEach(i => { const v = i.value.trim().replace(',', '.'); const k = st.karts[i.dataset.kartId] = st.karts[i.dataset.kartId] || {}; if (v && isFinite(+v)) k.kg = +v; });
+    try { await api('/rest/v1/docs?on_conflict=collection,id', { method: 'POST', prefer: 'resolution=merge-duplicates,return=minimal', body: [{ collection: 'settings', id: 'kart', data: st }] }); S.settings = st; S.karts = st.karts; render(); }
+    catch (err) { alert('Δεν κρατήθηκε. Ξαναδοκίμασε.'); }
+    return;
+  }
+  if (f.id === 'ask') {
+    const d = Object.assign({}, S.askDraft || {}), msg = f.querySelector('#amsg');
+    d.free = f.querySelector('#ask-free').value.trim(); d.at = nowIso();
+    f.querySelector('button[type=submit]').disabled = true;
+    try {
+      const cur = await api('/rest/v1/docs?select=data&collection=eq.coach&id=eq.survey-dimos');
+      const data = Object.assign({ sent: [] }, (cur[0] || {}).data || {}); data.sent = (data.sent || []).concat([d]);
+      await saveCoachDoc('survey-dimos', data); S.survey = data; S.askDraft = null; render();
+      const m = document.getElementById('amsg'); if (m) { m.hidden = false; m.className = 'ok small'; m.textContent = 'Στάλθηκε. Θα σου απαντήσει ο Coach στο Chat.'; }
+    } catch (err) { f.querySelector('button[type=submit]').disabled = false; msg.hidden = false; msg.className = 'err small'; msg.textContent = 'Δεν στάλθηκε. Ξαναδοκίμασε.'; }
+    return;
+  }
+  if (f.id === 'chat') {
+    const text = f.querySelector('#ctext').value.trim(), msg = f.querySelector('#cmsg');
+    if (!text) return;
+    f.querySelector('button').disabled = true;
+    try {
+      const cur = await api('/rest/v1/docs?select=data&collection=eq.coach&id=eq.chat-dimos');
+      const data = Object.assign({ sent: [], replies: [] }, (cur[0] || {}).data || {});
+      data.sent = (data.sent || []).concat([{ at: nowIso(), text }]);
+      await saveCoachDoc('chat-dimos', data); S.chat = data; render();
+    } catch (err) { f.querySelector('button').disabled = false; msg.hidden = false; msg.className = 'err small'; msg.textContent = 'Δεν στάλθηκε. Ξαναδοκίμασε.'; }
+  }
+});
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && Auth.s && S.tab === 'chat') load(); });
+render();
+if (Auth.s) load();
+</script>
+</body>
+</html>
