@@ -84,6 +84,59 @@ nav.tabs button { appearance: none; background: none; border: 0; color: var(--in
 nav.tabs button[aria-current="page"] { color: var(--pit); background: #10272a; }
 [hidden] { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+/* TR-CSS:begin */
+/* ---------- Δεδομένα (v44): a session's samples like Race Studio ---------- */
+.tr-tabs button { font-size: 13.5px; }
+.tr-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px 4px; }
+.tr-chips::-webkit-scrollbar { display: none; }
+.tr-chip { flex: none; display: flex; flex-direction: column; align-items: center; min-width: 64px; padding: 6px 8px; border-radius: 12px; border: 1px solid var(--edge); color: var(--ink); background: transparent; font-variant-numeric: tabular-nums; }
+.tr-chip b { font-size: 13px; } .tr-chip small { font-size: 12.5px; color: var(--ink2); }
+.tr-chip.best small { color: #c9a2ff; }
+.tr-chip.ref { border-color: #ff6b6b; box-shadow: inset 0 -3px 0 #ff6b6b; }
+.tr-chip.cmp { border-color: #5ad1ff; box-shadow: inset 0 -3px 0 #5ad1ff; }
+.tr-chip.off { opacity: .45; }
+.tr-key { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+.tr-key.ref { background: #ff6b6b; } .tr-key.cmp { background: #5ad1ff; }
+.tr-chs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.tr-chs .chip { min-height: 32px; font-size: 14px; padding: 0 11px; }
+.tr-read { min-height: 42px; font-size: 13.5px; color: var(--ink2); line-height: 1.45; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.tr-read b { color: var(--ink); } .tr-read .tr-r { color: #ff8b8b; } .tr-read .tr-c { color: #7fdcff; }
+.tr-read .tr-slow { color: #ff8b8b; } .tr-read .tr-fast { color: #6ee7a0; }
+.tr-td { touch-action: none; user-select: none; -webkit-user-select: none; }
+.tr-svg { display: block; width: 100%; }
+.tr-bg { fill: rgba(255,255,255,.035); }
+.tr-ref, .tr-cmp, .tr-dl { fill: none; stroke-width: 2.4; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.tr-ref { stroke: #ff6b6b; } .tr-cmp { stroke: #5ad1ff; } .tr-dl { stroke: #ffd166; }
+.tr-zero { stroke: rgba(255,255,255,.3); stroke-dasharray: 6 6; vector-effect: non-scaling-stroke; }
+.tr-cur { stroke: #fff; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.tr-lab { fill: var(--ink2); font-size: 24px; } .tr-lab.end { text-anchor: end; }
+.tr-pt { fill: #ff6b6b; } .tr-best { fill: #c9a2ff; }
+.tr-x { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink3, var(--ink2)); margin: 4px 0 10px; }
+.tr-mini, .tr-big { display: flex; flex-direction: column; align-items: center; }
+.tr-map { width: 100%; max-height: 360px; height: auto; }
+.tr-big .tr-map { max-height: 70vh; }
+.tr-mseg { stroke-width: 7; stroke-linecap: round; }
+.tr-mcmp { fill: none; stroke: #5ad1ff; stroke-width: 3; opacity: .85; }
+.tr-sf { fill: #fff; }
+.tr-sp { fill: #111; stroke: #fff; stroke-width: 2; } .tr-sp.hl { fill: #c9a2ff; }
+.tr-spn { fill: #fff; font-size: 18px; font-weight: 700; text-anchor: middle; }
+.tr-dot { fill: none; stroke: #ff6b6b; stroke-width: 5; } .tr-dot2 { fill: none; stroke: #5ad1ff; stroke-width: 5; }
+.tr-scale { display: flex; align-items: center; gap: 8px; width: 100%; font-size: 12px; color: var(--ink2); margin-top: 6px; }
+.tr-scale i { flex: 1; height: 6px; border-radius: 3px; background: linear-gradient(90deg, hsl(0 85% 55%), hsl(65 85% 55%), hsl(130 85% 55%)); }
+.tr-tblw { overflow-x: auto; margin: 8px -16px; padding: 0 16px; }
+.tr-tbl { border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tr-tbl th, .tr-tbl td { padding: 6px 7px; border-bottom: 1px solid var(--edge); text-align: right; }
+.tr-tbl th:first-child { text-align: left; position: sticky; left: 0; background: var(--board); z-index: 1; }
+.tr-tbl th small { color: var(--ink2); font-weight: 400; }
+.tr-tbl tr:first-child th { color: var(--ink2); font-weight: 600; }
+.tr-tbl .tr-b { color: #c9a2ff; font-weight: 700; } .tr-tbl .tr-w { color: #ff8b8b; }
+.tr-tbl .tr-rref th:first-child { box-shadow: inset 3px 0 0 #ff6b6b; } .tr-tbl .tr-rcmp th:first-child { box-shadow: inset 3px 0 0 #5ad1ff; }
+.tr-tbl .tr-foot th, .tr-tbl .tr-foot td { color: var(--ink2); }
+.tr-tbl .tr-off { opacity: .5; }
+.tr-loss { margin: 4px 0 8px; padding-left: 18px; font-size: 14.5px; line-height: 1.5; }
+.tr-file input { display: none; }
+
+/* TR-CSS:end */
 </style>
 </head>
 <body>
@@ -116,6 +169,257 @@ const KIND = { setup: 'Setup', pressure: 'Πιέσεις', tech: 'Τεχνική
 const trackLabel = t => String(t || 'Πίστα;').replace(/^DaytonaK\s*/i, 'Daytona ').replace(/^DAYTONA$/, 'Daytona').replace(/^Daytona STEF$/i, 'Daytona (STEF)');
 const nowIso = () => { const d = new Date(), o = -d.getTimezoneOffset(), s = o >= 0 ? '+' : '-'; return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}${s}${pad(Math.floor(Math.abs(o) / 60))}:${pad(Math.abs(o) % 60)}`; };
 const hm = s => { const d = new Date(s); return isNaN(d) ? '' : `${d.getDate()}/${d.getMonth() + 1} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+
+/* TR:begin */
+const TR = (() => {
+  const SC = { d: 10, spd: 10, rpm: 1, lat: 1e6, lon: 1e6, gx: 100, gy: 100, egt: 1, water: 1 };
+  const CH = { spd: ['Ταχύτητα', 'km/h', 0], rpm: ['Στροφές', 'rpm', 0], gy: ['Πλευρικά g', 'g', 2], gx: ['Φρένο / γκάζι g', 'g', 2], egt: ['EGT', '°C', 0], water: ['Νερό', '°C', 0] };
+  const esc = s => String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fx = (v, n) => v === null || v === undefined || !Number.isFinite(v) ? '—' : v.toFixed(n).replace('.', ',');
+  const lapT = s => { if (s === null || s === undefined || !Number.isFinite(s)) return '—'; const m = Math.floor(s / 60), r = s - m * 60; return m ? `${m}:${r.toFixed(3).padStart(6, '0')}` : r.toFixed(3); };
+  const secT = s => !Number.isFinite(s) ? '—' : s.toFixed(3);
+
+  /* ---- encoding ---- */
+  function enc(arr, sc) {
+    let prev = 0; const out = [];
+    for (let i = 0; i < arr.length; i++) { const v = Math.round(arr[i] * sc); out.push(i ? v - prev : v); prev = v; }
+    return out.join(',');
+  }
+  function dec(str, sc) {
+    if (!str) return null;
+    const p = String(str).split(','), out = new Float64Array(p.length); let acc = 0;
+    for (let i = 0; i < p.length; i++) { acc += +p[i] || 0; out[i] = acc / sc; }
+    return out;
+  }
+  /** samples → trace. t: session time (s) of every sample; cols: { spd: [...], ... } same length (null where missing);
+      marks: segment ends (s); kinds: one per segment. Resampled at hz from each segment's start, distance from the speed. */
+  function build({ t, cols, marks, kinds, hz = 10, src = 'csv', venue = '', date = null, time = null }) {
+    const names = Object.keys(cols).filter(k => SC[k] && cols[k].some(v => v !== null && Number.isFinite(v)));
+    // forward-fill gaps, so interpolation always has a value
+    const C = {};
+    names.forEach(k => { const a = cols[k], o = new Float64Array(a.length); let last = null; for (let i = 0; i < a.length; i++) { if (a[i] !== null && Number.isFinite(a[i])) last = a[i]; o[i] = last === null ? NaN : last; } let first = o.find(Number.isFinite); for (let i = 0; i < o.length && !Number.isFinite(o[i]); i++) o[i] = first; C[k] = o; });
+    let p = 0;
+    const at = (k, s) => {
+      while (p + 1 < t.length && t[p + 1] <= s) p++;
+      while (p > 0 && t[p] > s) p--;
+      const a = C[k], q = Math.min(p + 1, t.length - 1);
+      if (q === p || t[q] === t[p]) return a[p];
+      const f = Math.max(0, Math.min(1, (s - t[p]) / (t[q] - t[p])));
+      return a[p] + (a[q] - a[p]) * f;
+    };
+    const laps = [];
+    marks.forEach((end, j) => {
+      const start = j ? marks[j - 1] : (t.length ? t[0] : 0), dur = end - start;
+      if (!(dur > 1)) return;
+      const n = Math.floor(dur * hz + 1e-6) + 1, c = {};
+      const series = {}; names.forEach(k => { series[k] = new Array(n); });
+      p = 0;
+      for (let i = 0; i < n; i++) { const s = start + i / hz; names.forEach(k => { series[k][i] = at(k, s); }); }
+      if (series.spd) {
+        const d = new Array(n); d[0] = 0;
+        for (let i = 1; i < n; i++) d[i] = d[i - 1] + (series.spd[i - 1] + series.spd[i]) / 2 / 3.6 / hz;
+        c.d = enc(d, SC.d);
+      }
+      names.forEach(k => { c[k] = enc(series[k], SC[k]); });
+      laps.push({ n: j, kind: kinds[j] || 'lap', time: Math.round(dur * 1000) / 1000, c });
+    });
+    return { v: 1, hz, src, venue, date, time, laps };
+  }
+
+  /* ---- decoding, cached per trace object ---- */
+  const DEC = new WeakMap();
+  function lapsOf(tr) {
+    if (!tr || !Array.isArray(tr.laps)) return [];
+    if (DEC.has(tr)) return DEC.get(tr);
+    const hz = tr.hz || 10;
+    const out = tr.laps.map(L => {
+      const o = { n: L.n, kind: L.kind || 'lap', time: L.time, hz };
+      Object.keys(SC).forEach(k => { o[k] = dec(L.c && L.c[k], SC[k]); });
+      const N = o.spd ? o.spd.length : o.d ? o.d.length : Math.round(L.time * hz) + 1;
+      o.N = N;
+      if (!o.d) { o.d = new Float64Array(N); for (let i = 0; i < N; i++) o.d[i] = i / (N - 1 || 1) * 1000; }
+      o.len = o.d[N - 1] || 1;
+      o.gps = !!(o.lat && o.lon && o.lat.some(v => v !== 0));
+      return o;
+    });
+    DEC.set(tr, out);
+    return out;
+  }
+  const real = laps => laps.filter(L => L.kind === 'lap');
+  function bestLap(laps) { let b = null; real(laps).forEach(L => { if (!b || L.time < b.time) b = L; }); return b; }
+  /** index (fractional) where the lap has covered fraction f of its distance */
+  function idxAtFrac(L, f) {
+    const target = f * L.len, d = L.d;
+    let lo = 0, hi = L.N - 1;
+    if (target <= 0) return 0; if (target >= d[hi]) return hi;
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (d[m] <= target) lo = m; else hi = m; }
+    const span = d[hi] - d[lo];
+    return lo + (span > 0 ? (target - d[lo]) / span : 0);
+  }
+  function valAt(arr, x) { if (!arr) return null; const i = Math.floor(x), j = Math.min(i + 1, arr.length - 1); return arr[i] + (arr[j] - arr[i]) * (x - i); }
+  const timeAtIdx = (L, x) => Math.min(L.time, x / L.hz);
+
+  /* ---- sectors: split at the reference lap's apexes and the end of each straight ---- */
+  function smooth(a, w) { const n = a.length, o = new Float64Array(n); for (let i = 0; i < n; i++) { let s = 0, c = 0; for (let j = Math.max(0, i - w); j <= Math.min(n - 1, i + w); j++) { s += a[j]; c++; } o[i] = s / c; } return o; }
+  function sectorPoints(ref) {
+    const N = ref.N, pts = [];
+    if (ref.spd && N > 60) {
+      const s = smooth(ref.spd, 3), W = Math.max(8, Math.round(ref.hz * 1.2));
+      for (let i = W; i < N - W; i++) {
+        let isMin = true, isMax = true, lo = Infinity, hi = -Infinity;
+        for (let j = i - W; j <= i + W; j++) { if (s[j] < s[i]) isMin = false; if (s[j] > s[i]) isMax = false; lo = Math.min(lo, s[j]); hi = Math.max(hi, s[j]); }
+        if ((isMin || isMax) && hi - lo >= 4) pts.push(i);
+      }
+    }
+    let keep = [];
+    pts.forEach(i => { const d = ref.d[i]; if (d < 25 || ref.len - d < 25) return; if (keep.length && d - ref.d[keep[keep.length - 1]] < 35) return; keep.push(i); });
+    if (keep.length < 3) { keep = []; for (let k = 1; k < 8; k++) keep.push(Math.round(idxAtFrac(ref, k / 8))); }
+    return keep.map(i => ({ i, f: ref.d[i] / ref.len, lat: ref.gps ? ref.lat[i] : null, lon: ref.gps ? ref.lon[i] : null }));
+  }
+  const M_LAT = 110540;
+  function nearIdx(L, p, ref) {
+    const guess = idxAtFrac(L, p.f);
+    if (!(L.gps && ref.gps && p.lat !== null)) return guess;
+    const kx = 111320 * Math.cos(p.lat * Math.PI / 180), win = Math.max(10, Math.round(L.N * 0.06));
+    const hd = (A, i) => { const a = Math.max(0, i - 2), b = Math.min(A.N - 1, i + 2); const x = (A.lon[b] - A.lon[a]) * kx, y = (A.lat[b] - A.lat[a]) * M_LAT, m = Math.hypot(x, y) || 1; return [x / m, y / m]; };
+    const h0 = hd(ref, p.i);
+    let bi = -1, bd = Infinity;
+    for (let i = Math.max(0, Math.floor(guess) - win); i <= Math.min(L.N - 1, Math.ceil(guess) + win); i++) {
+      const dx = (L.lon[i] - p.lon) * kx, dy = (L.lat[i] - p.lat) * M_LAT, dd = dx * dx + dy * dy;
+      if (dd >= bd) continue;
+      const h = hd(L, i); if (h[0] * h0[0] + h[1] * h0[1] < 0.5) continue;   // the same place driven the other way (a crossing, the other side of a hairpin)
+      bd = dd; bi = i;
+    }
+    if (bi < 0 || bd > 30 * 30) return guess;   // more than 30 m off: the GPS lost it, go by distance
+    // between which two samples does it pass closest: project on the neighbour segments
+    let best = bi, bestD = bd;
+    [bi - 1, bi].forEach(a => {
+      const b = a + 1; if (a < 0 || b >= L.N) return;
+      const ax = (L.lon[a] - p.lon) * kx, ay = (L.lat[a] - p.lat) * M_LAT, bx = (L.lon[b] - p.lon) * kx, by = (L.lat[b] - p.lat) * M_LAT;
+      const vx = bx - ax, vy = by - ay, vv = vx * vx + vy * vy; if (!vv) return;
+      const u = Math.max(0, Math.min(1, -(ax * vx + ay * vy) / vv)), qx = ax + vx * u, qy = ay + vy * u, dd = qx * qx + qy * qy;
+      if (dd <= bestD) { bestD = dd; best = a + u; }
+    });
+    return best;
+  }
+  /** → { pts, rows: [{ lap, split: [s] }], stats: { best, worst, avg, med, max, sd, theo, rolling: {sum, from} } } */
+  function splits(laps, ref) {
+    ref = ref || bestLap(laps);
+    if (!ref) return null;
+    const pts = sectorPoints(ref), R = real(laps);
+    const rows = R.map(L => {
+      let prev = 0; const out = [];
+      pts.forEach(p => { let t = timeAtIdx(L, nearIdx(L, p, ref)); if (t <= prev) t = prev + 0.001; out.push(t - prev); prev = t; });
+      out.push(Math.max(0.001, L.time - prev));
+      return { lap: L, split: out };
+    });
+    const nS = pts.length + 1, col = k => rows.map(r => r.split[k]);
+    const med = a => { const s = a.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+    const sd = a => { if (a.length < 2) return 0; const m = a.reduce((x, y) => x + y, 0) / a.length; return Math.sqrt(a.reduce((x, y) => x + (y - m) ** 2, 0) / (a.length - 1)); };
+    const S = { best: [], worst: [], avg: [], med: [], max: [], sd: [] };
+    for (let k = 0; k < nS; k++) { const a = col(k); S.best.push(Math.min(...a)); S.max.push(Math.max(...a)); S.avg.push(a.reduce((x, y) => x + y, 0) / a.length); S.med.push(med(a)); S.sd.push(sd(a)); }
+    S.theo = S.best.reduce((x, y) => x + y, 0);
+    // rolling best: one lap's worth of sectors in a row, across lap ends, over laps driven one after another
+    let roll = null;
+    const seq = []; rows.forEach((r, ri) => r.split.forEach((v, k) => seq.push({ v, ri, k, n: r.lap.n })));
+    for (let s0 = 0; s0 + nS <= seq.length; s0++) {
+      let sum = 0, ok = true;
+      for (let j = s0; j < s0 + nS; j++) { sum += seq[j].v; if (j > s0 && seq[j].n - seq[j - 1].n > 1) ok = false; }
+      if (ok && (!roll || sum < roll.sum - 1e-9)) roll = { sum, from: seq[s0], to: seq[s0 + nS - 1] };
+    }
+    S.rolling = roll;
+    return { pts, rows, nS, stats: S, ref };
+  }
+  /** where the time goes: sectors by median − best, and the reference lap's own losses */
+  function losses(sp) {
+    const S = sp.stats, byMed = S.med.map((m, k) => ({ k, loss: m - S.best[k], sd: S.sd[k] })).sort((a, b) => b.loss - a.loss);
+    const refRow = sp.rows.find(r => r.lap === sp.ref);
+    const ofRef = refRow ? refRow.split.map((v, k) => ({ k, loss: v - S.best[k], from: sp.rows.find(r => Math.abs(r.split[k] - S.best[k]) < 1e-9) })).sort((a, b) => b.loss - a.loss) : [];
+    return { byMed, ofRef };
+  }
+  /** time difference of lap c against r at every sample of r, by fraction of the lap */
+  function delta(r, c) {
+    const out = new Float64Array(r.N);
+    for (let i = 0; i < r.N; i++) out[i] = timeAtIdx(c, idxAtFrac(c, r.d[i] / r.len)) - i / r.hz;
+    return out;
+  }
+  function report(laps) {
+    const mx = a => a ? Math.max(...a) : null, mn = a => a ? Math.min(...a) : null;
+    return laps.map(L => ({ L, time: L.time, len: L.len, rpm: mx(L.rpm), top: mx(L.spd), min: mn(L.spd), gy: L.gy ? Math.max(...L.gy.map(Math.abs)) : null, egt: mx(L.egt), water: mx(L.water) }));
+  }
+
+  /* ---- drawing (SVG strings; viewBox width 1000) ---- */
+  const W = 1000;
+  function pathOf(L, arr, lo, hi, H, top, step) {
+    if (!arr) return '';
+    const span = hi - lo || 1; let s = '';
+    for (let i = 0; i < L.N; i += step) { const x = L.d[i] / L.len * W, y = top + H - (arr[i] - lo) / span * H; s += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }
+    return s;
+  }
+  function range(arrs, pad) { let lo = Infinity, hi = -Infinity; arrs.forEach(a => { if (a) for (let i = 0; i < a.length; i++) { if (a[i] < lo) lo = a[i]; if (a[i] > hi) hi = a[i]; } }); if (!Number.isFinite(lo)) return [0, 1]; const p = (hi - lo) * (pad || 0.06) || 1; return [lo - p, hi + p]; }
+  /** stacked panels: delta (when comparing) and the chosen channels, a cursor line in each */
+  function tdSvg(r, c, chans) {
+    const step = Math.max(1, Math.round(r.N / 900)), panels = [];
+    if (c) panels.push({ k: 'delta', name: 'Δέλτα', unit: 's', a: delta(r, c), h: 90 });
+    chans.forEach(k => { if (r[k] || (c && c[k])) panels.push({ k, name: CH[k][0], unit: CH[k][1], h: k === 'spd' || k === 'rpm' ? 150 : 110 }); });
+    let y = 0, body = '';
+    panels.forEach(P => {
+      const top = y + 6, H = P.h - 12;
+      if (P.k === 'delta') {
+        const [lo0, hi0] = range([P.a], 0.1), m = Math.max(Math.abs(lo0), Math.abs(hi0), 0.05), lo = -m, hi = m, zy = top + H - (0 - lo) / (hi - lo) * H;
+        body += `<g><rect x="0" y="${y}" width="${W}" height="${P.h}" class="tr-bg"/><line x1="0" x2="${W}" y1="${zy.toFixed(1)}" y2="${zy.toFixed(1)}" class="tr-zero"/>`;
+        body += `<path d="${pathOf(r, P.a, lo, hi, H, top, step)}" class="tr-dl"/><text x="8" y="${y + 18}" class="tr-lab">Δέλτα (s) · πάνω = πιο αργός</text><text x="${W - 8}" y="${y + 18}" class="tr-lab end">±${fx(m, 2)}</text></g>`;
+      } else {
+        const [lo, hi] = range([r[P.k], c && c[P.k]]);
+        body += `<g><rect x="0" y="${y}" width="${W}" height="${P.h}" class="tr-bg"/>`;
+        if (c && c[P.k]) body += `<path d="${pathOf(c, c[P.k], lo, hi, H, top, step)}" class="tr-cmp"/>`;
+        if (r[P.k]) body += `<path d="${pathOf(r, r[P.k], lo, hi, H, top, step)}" class="tr-ref"/>`;
+        body += `<text x="8" y="${y + 18}" class="tr-lab">${esc(P.name)} (${esc(P.unit)})</text><text x="${W - 8}" y="${y + 18}" class="tr-lab end">${fx(hi, CH[P.k][2])}</text><text x="${W - 8}" y="${y + P.h - 6}" class="tr-lab end">${fx(lo, CH[P.k][2])}</text></g>`;
+      }
+      y += P.h + 4;
+    });
+    return { svg: `<svg class="tr-svg" viewBox="0 0 ${W} ${y}" preserveAspectRatio="none" style="height:${Math.round(y * 0.42)}px">${body}<line class="tr-cur" x1="-10" x2="-10" y1="0" y2="${y}"/></svg>`, panels };
+  }
+  /** the track from the reference lap's GPS, coloured by speed; the compared lap thin; sector numbers */
+  function mapSvg(r, c, pts, opts = {}) {
+    if (!r.gps) return '<p class="hint">Αυτό το αρχείο δεν έχει GPS θέσεις (latitude / longitude), οπότε δεν βγαίνει χάρτης.</p>';
+    const lat0 = r.lat[0], kx = 111320 * Math.cos(lat0 * Math.PI / 180);
+    const X = (L, i) => (L.lon[i] - r.lon[0]) * kx, Y = (L, i) => -(L.lat[i] - lat0) * M_LAT;
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (let i = 0; i < r.N; i++) { const x = X(r, i), y = Y(r, i); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+    const pad = 18, w = x1 - x0 || 1, h = y1 - y0 || 1, S = 1000;
+    const k = (S - 2 * pad) / Math.max(w, h), VW = w * k + 2 * pad, VH = h * k + 2 * pad;
+    const P = (L, i) => [((X(L, i) - x0) * k + pad), ((Y(L, i) - y0) * k + pad)];
+    const lo = Math.min(...r.spd), hi = Math.max(...r.spd);
+    const col = v => { const f = Math.max(0, Math.min(1, (v - lo) / (hi - lo || 1))); const hue = 0 + f * 130; return `hsl(${hue.toFixed(0)} 85% 55%)`; };
+    let body = '';
+    if (c && c.gps) { let d = ''; for (let i = 0; i < c.N; i += 2) { const [x, y] = P(c, i); d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); } body += `<path d="${d}" class="tr-mcmp"/>`; }
+    for (let i = 1; i < r.N; i++) { const [ax, ay] = P(r, i - 1), [bx, by] = P(r, i); body += `<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="${col(r.spd[i])}" class="tr-mseg"/>`; }
+    const [sx, sy] = P(r, 0); body += `<rect x="${(sx - 9).toFixed(1)}" y="${(sy - 9).toFixed(1)}" width="18" height="18" class="tr-sf"/>`;
+    if (pts) pts.forEach((p, j) => { const [x, y] = P(r, p.i); body += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${opts.big ? 15 : 12}" class="tr-sp${opts.hl === j + 1 ? ' hl' : ''}"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" class="tr-spn">${j + 1}</text>`; });
+    body += `<circle class="tr-dot" cx="-50" cy="-50" r="13"/><circle class="tr-dot2" cx="-50" cy="-50" r="10"/>`;
+    return `<svg class="tr-map" viewBox="0 0 ${VW.toFixed(0)} ${VH.toFixed(0)}" data-k="${k}" data-x0="${x0}" data-y0="${y0}" data-pad="${pad}">${body}</svg>
+      <div class="tr-scale"><span>${fx(lo, 0)} km/h</span><i></i><span>${fx(hi, 0)} km/h</span></div>`;
+  }
+  /** where on the map a lap is at fraction f */
+  function mapPoint(svg, r, L, f) {
+    if (!svg || !L.gps) return null;
+    const k = +svg.dataset.k, x0 = +svg.dataset.x0, y0 = +svg.dataset.y0, pad = +svg.dataset.pad;
+    const i = idxAtFrac(L, f), lat0 = r.lat[0], kx = 111320 * Math.cos(lat0 * Math.PI / 180);
+    const X = (L.lon ? valAt(L.lon, i) : 0) - r.lon[0], Y = -((valAt(L.lat, i)) - lat0);
+    return [(X * kx - x0) * k + pad, (Y * M_LAT - y0) * k + pad];
+  }
+  function lapsSvg(rep) {
+    const L = rep.filter(x => x.L.kind === 'lap'); if (L.length < 2) return '';
+    const lo = Math.min(...L.map(x => x.time)), hi = Math.max(...L.map(x => x.time)), span = hi - lo || 1, H = 160, pad = 14;
+    const X = j => pad + j / (L.length - 1) * (W - 2 * pad), Y = v => pad + (v - lo) / span * (H - 2 * pad);
+    const d = L.map((x, j) => `${j ? 'L' : 'M'}${X(j).toFixed(1)} ${Y(x.time).toFixed(1)}`).join('');
+    const dots = L.map((x, j) => `<circle cx="${X(j).toFixed(1)}" cy="${Y(x.time).toFixed(1)}" r="6" class="${x.time === lo ? 'tr-best' : 'tr-pt'}"/>`).join('');
+    return `<svg class="tr-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:120px"><rect x="0" y="0" width="${W}" height="${H}" class="tr-bg"/><path d="${d}" class="tr-ref"/>${dots}<text x="8" y="16" class="tr-lab">πιο γρήγορα πάνω · ${lapT(lo)} – ${lapT(hi)}</text></svg>`;
+  }
+  return { SC, CH, enc, dec, build, lapsOf, real, bestLap, idxAtFrac, valAt, splits, losses, delta, report, tdSvg, mapSvg, mapPoint, lapsSvg, esc, fx, lapT, secT };
+})();
+/* TR:end */
 
 /* ---------- auth ---------- */
 const Auth = {
@@ -257,6 +561,7 @@ function sessHtml(k) {
     ${a ? `<p class="small">Μέσος καθαρών <span class="t">${lapFmt(a.avg)}</span> · σταθερότητα <span class="t">±${f3(a.sd)}</span></p>
     <div class="laps t">${a.L.map((x, i) => `<span class="${a.cls[i]}">${i + 1}: ${lapFmt(x)}</span>`).join('')}</div>` : ''}
     ${verdict(k)}
+    ${k.trace ? `<button class="btn" data-trace="${esc(k._id)}">Δεδομένα: γράφημα, sectors, χάρτης</button>` : ''}
     ${a && a.fake.some(Boolean) ? '<p class="muted small">Διαγραμμένος: γύρος που έκοψε το beacon, δεν μετράει.</p>' : ''}
     ${setup ? `<p class="small muted">Setup: ${esc(setup)}</p>` : ''}
     <form class="sedit" data-sid="${esc(k._id)}"><div class="row">${SETUP_F.map(([f, t]) => `<label>${t}<input name="${f}" value="${esc((k.setup || {})[f] || '')}"></label>`).join('')}</div>
@@ -404,16 +709,87 @@ function engRead() {
   E.kart = v('e-kart') || E.kart; E.track = v('e-track') ?? E.track; E.air = v('e-air') ?? E.air; E.tt = v('e-tt') ?? E.tt; E.grip = v('e-grip') ?? E.grip; E.tyres = v('e-tyres') ?? E.tyres; E.text = v('e-text') ?? E.text;
   if (document.getElementById('e-where')) E.where = v('e-where'); if (document.getElementById('e-hot')) E.hot = v('e-hot');
 }
+
+/* ---------- Δεδομένα: a session's samples (public.kart_traces), the same screens as SC's Karting → Δεδομένα ---------- */
+const TRC = { cache: {}, busy: {}, err: {}, ui: {} };
+const TR_TABS = [['td', 'Χρόνος–Απόσταση'], ['splits', 'Sectors'], ['channels', 'Κανάλια'], ['map', 'Χάρτης']];
+const trChans = () => { const v = LS.get('scc-tr-ch', null); return Array.isArray(v) && v.length ? v : ['spd', 'rpm']; };
+function trLoad(id) {
+  if (TRC.cache[id] || TRC.busy[id]) return;
+  TRC.busy[id] = true; delete TRC.err[id];
+  api(`/rest/v1/kart_traces?id=eq.${encodeURIComponent(id)}&select=data`).then(rows => { if (rows && rows[0]) TRC.cache[id] = rows[0].data; else TRC.err[id] = 'none'; })
+    .catch(() => { TRC.err[id] = 'error'; }).finally(() => { TRC.busy[id] = false; if (S.tab === 'data') render(); });
+}
+function trPick(id) {
+  const laps = TR.lapsOf(TRC.cache[id]), real = TR.real(laps), st = TRC.ui[id] || (TRC.ui[id] = {}), best = TR.bestLap(laps);
+  const ref = real.find(L => L.n === st.ref) || best;
+  let cmp = st.cmp === undefined ? (real.filter(L => L !== ref).sort((a, b) => a.time - b.time)[0] || null) : real.find(L => L.n === st.cmp) || null;
+  if (cmp === ref) cmp = null;
+  return { laps, real, best, ref, cmp, st };
+}
+function trLap(n) { const P = trPick(S.dataId); if (n === P.ref.n) return; if (P.cmp && n === P.cmp.n) { P.st.ref = n; P.st.cmp = P.ref.n; } else { P.st.ref = P.ref.n; P.st.cmp = n; } }
+function viewData() {
+  const id = S.dataId, k = S.sessions.find(x => x._id === id), tab = S.dataTab || 'td';
+  let h = `<section class="card"><button class="link" data-tab="days">‹ Μέρες</button><h2 style="margin:6px 0 0">${esc(k ? `${dm(k.date)}${k.time ? ` ${k.time}` : ''} · ${trackLabel(k.track)}` : 'Δεδομένα')}</h2></section>`;
+  const tr = TRC.cache[id];
+  if (!tr) { trLoad(id); const e = TRC.err[id]; return h + `<section class="card"><p class="muted">${e === 'none' ? 'Αυτό το session δεν έχει δεδομένα.' : e ? 'Δεν φόρτωσαν τα δεδομένα. Δοκίμασε ξανά.' : 'Φορτώνω τα δεδομένα…'}</p></section>`; }
+  const P = trPick(id); if (!P.ref) return h + '<section class="card"><p class="muted">Δεν βρήκα ολόκληρους γύρους.</p></section>';
+  const { laps, ref, cmp, best } = P;
+  h += `<section class="card"><div class="chips">${TR_TABS.map(([t, n]) => `<button class="chip" data-trtab="${t}" aria-pressed="${t === tab}">${n}</button>`).join('')}</div>
+    <div class="tr-chips" style="margin-top:10px">${laps.map(L => `<button class="tr-chip${L === ref ? ' ref' : ''}${L === cmp ? ' cmp' : ''}${L.kind !== 'lap' ? ' off' : ''}${L === best ? ' best' : ''}" data-trlap="${L.n}"${L.kind !== 'lap' ? ' disabled' : ''}><b>${L.kind === 'out' ? 'Έξοδος' : L.kind === 'in' ? 'Είσοδος' : `Γ${L.n}`}</b><small>${TR.lapT(L.time)}</small></button>`).join('')}</div>
+    <p class="small muted"><i class="tr-key ref"></i>αναφορά γύρος ${ref.n}${ref === best ? ' (καλύτερος)' : ''}${cmp ? ` · <i class="tr-key cmp"></i>σύγκριση γύρος ${cmp.n}` : ''}. Πάτα έναν γύρο για σύγκριση, ξανά για να γίνει αναφορά.</p></section>`;
+  const sp = TR.splits(laps, ref);
+  if (tab === 'td') {
+    const chans = trChans(), avail = Object.keys(TR.CH).filter(c => ref[c]);
+    h += `<section class="card"><div class="tr-chs">${avail.map(c => `<button class="chip" data-trch="${c}" aria-pressed="${chans.includes(c)}">${esc(TR.CH[c][0])}</button>`).join('')}</div>
+      <div class="tr-read" id="tr-read">Σύρε το δάχτυλο πάνω στο γράφημα.</div><div class="tr-td">${TR.tdSvg(ref, cmp, chans.filter(c => avail.includes(c))).svg}</div>
+      <div class="tr-x"><span>0 m</span><span>απόσταση</span><span>${TR.fx(ref.len, 0)} m</span></div><div class="tr-mini">${TR.mapSvg(ref, cmp, sp && sp.pts)}</div></section>`;
+  } else if (tab === 'splits' && sp) {
+    const St = sp.stats, Lo = TR.losses(sp), nS = sp.nS;
+    const cell = (v, j) => `<td class="${Math.abs(v - St.best[j]) < 1e-9 ? 'tr-b' : sp.rows.length > 2 && Math.abs(v - St.max[j]) < 1e-9 ? 'tr-w' : ''}">${TR.secT(v)}</td>`;
+    const foot = [['Μέσος', St.avg, true], ['Διάμεσος', St.med, true], ['Θεωρητικός', St.best, true], ['Χειρότερος', St.max, true], ['Διασπορά', St.sd, false]].map(([n, a, t]) => `<tr class="tr-foot"><th>${n}${t ? ` <small>${TR.lapT(a.reduce((x, y) => x + y, 0))}</small>` : ''}</th>${a.map(v => `<td>${TR.secT(v)}</td>`).join('')}</tr>`).join('');
+    h += `<section class="card"><p>Καλύτερος <b class="t">${TR.lapT(sp.ref.time)}</b> · θεωρητικός <b class="t" style="color:var(--best)">${TR.lapT(St.theo)}</b> · rolling <b class="t">${St.rolling ? TR.lapT(St.rolling.sum) : '—'}</b></p>
+      <ul class="tr-loss">${Lo.ofRef.filter(x => x.loss > 0.005).slice(0, 3).map(x => `<li><b>Sector ${x.k + 1}</b>: ο γύρος ${sp.ref.n} χάνει ${TR.fx(x.loss, 3)}${x.from ? ` (το καλύτερο στον γύρο ${x.from.lap.n})` : ''}</li>`).join('')}${Lo.byMed.filter(x => x.loss > 0.01).slice(0, 3).map(x => `<li><b>Sector ${x.k + 1}</b>: συνήθως ${TR.fx(x.loss, 3)} πιο αργός, διασπορά ${TR.fx(x.sd, 3)}</li>`).join('')}</ul>
+      <div class="tr-tblw"><table class="tr-tbl"><tr><th>Γύρος</th>${Array.from({ length: nS }, (_, j) => `<th>${j + 1}</th>`).join('')}</tr>${sp.rows.map(r => `<tr class="${r.lap === ref ? 'tr-rref' : r.lap === cmp ? 'tr-rcmp' : ''}"><th>${TR.lapT(r.lap.time)} <small>Γ${r.lap.n}</small></th>${r.split.map(cell).join('')}</tr>`).join('')}${foot}</table></div>
+      <div class="tr-mini">${TR.mapSvg(ref, null, sp.pts, { big: true })}</div></section>`;
+  } else if (tab === 'channels') {
+    const rep = TR.report(laps), has = c => rep.some(x => x[c] !== null && x[c] !== undefined);
+    const cols = [['time', 'Χρόνος', x => TR.lapT(x.time)], ['len', 'm', x => TR.fx(x.len, 1)], ['rpm', 'Μέγ. στροφές', x => TR.fx(x.rpm, 0)], ['top', 'Μέγ. km/h', x => TR.fx(x.top, 1)], ['min', 'Ελάχ. km/h', x => TR.fx(x.min, 1)], ['gy', 'Πλευρικά g', x => TR.fx(x.gy, 2)], ['egt', 'EGT', x => TR.fx(x.egt, 0)], ['water', 'Νερό', x => TR.fx(x.water, 0)]].filter(c => c[0] === 'time' || c[0] === 'len' || has(c[0]));
+    h += `<section class="card"><div class="tr-tblw"><table class="tr-tbl"><tr><th>Γύρος</th>${cols.map(c => `<th>${c[1]}</th>`).join('')}</tr>${rep.map(x => `<tr class="${x.L.kind !== 'lap' ? 'tr-off' : x.L === ref ? 'tr-rref' : ''}"><th>${x.L.kind === 'out' ? 'Έξοδος' : x.L.kind === 'in' ? 'Είσοδος' : `Γ${x.L.n}`}</th>${cols.map(c => `<td>${c[2](x)}</td>`).join('')}</tr>`).join('')}</table></div>${TR.lapsSvg(rep)}</section>`;
+  } else {
+    h += `<section class="card"><p class="small muted">Ο γύρος αναφοράς με χρώμα την ταχύτητα: κόκκινο αργά, πράσινο γρήγορα.${cmp ? ' Η λεπτή γραμμή είναι ο γύρος σύγκρισης.' : ''}</p><div class="tr-big">${TR.mapSvg(ref, cmp, sp && sp.pts, { big: true })}</div></section>`;
+  }
+  return h;
+}
+function trBind() {
+  const box = document.querySelector('.tr-td'); if (!box) return;
+  const P = trPick(S.dataId), { ref, cmp } = P, svg = box.querySelector('svg'), cur = svg.querySelector('.tr-cur'), read = document.getElementById('tr-read');
+  const map = document.querySelector('.tr-mini .tr-map'), dot = map && map.querySelector('.tr-dot'), dot2 = map && map.querySelector('.tr-dot2');
+  const dl = cmp ? TR.delta(ref, cmp) : null, chans = trChans().filter(c => ref[c]);
+  const move = ev => {
+    const rc = svg.getBoundingClientRect(), f = Math.max(0, Math.min(1, (ev.clientX - rc.left) / rc.width));
+    cur.setAttribute('x1', f * 1000); cur.setAttribute('x2', f * 1000);
+    const ir = TR.idxAtFrac(ref, f), ic = cmp ? TR.idxAtFrac(cmp, f) : null, parts = [`<b>${TR.fx(f * ref.len, 0)} m</b>`];
+    if (dl) { const d = TR.valAt(dl, ir); parts.push(`Δέλτα <b class="${d > 0 ? 'tr-slow' : 'tr-fast'}">${d > 0 ? '+' : ''}${TR.fx(d, 3)}</b>`); }
+    chans.forEach(c => { const [n, u, g] = TR.CH[c]; parts.push(`${n} <b class="tr-r">${TR.fx(TR.valAt(ref[c], ir), g)}</b>${cmp && cmp[c] ? ` / <b class="tr-c">${TR.fx(TR.valAt(cmp[c], ic), g)}</b>` : ''} ${u}`); });
+    read.innerHTML = parts.join(' · ');
+    if (map) { const p = TR.mapPoint(map, ref, ref, f); if (p) { dot.setAttribute('cx', p[0]); dot.setAttribute('cy', p[1]); } const q = cmp ? TR.mapPoint(map, ref, cmp, f) : null; if (q) { dot2.setAttribute('cx', q[0]); dot2.setAttribute('cy', q[1]); } }
+  };
+  box.addEventListener('pointerdown', ev => { move(ev); try { box.setPointerCapture(ev.pointerId); } catch (e) {} });
+  box.addEventListener('pointermove', ev => { if (ev.buttons || ev.pointerType === 'mouse') move(ev); });
+}
+
 let notePreset = '';
 function render() {
   const app = document.getElementById('app'), tabs = document.getElementById('tabs');
   if (!Auth.s) { tabs.hidden = true; app.innerHTML = viewLogin(render.msg || ''); return; }
   tabs.hidden = false;
-  const navTab = { notes: 'days', ask: 'chat', records: 'analysis' }[S.tab] || S.tab;
+  const navTab = { notes: 'days', ask: 'chat', records: 'analysis', data: 'days' }[S.tab] || S.tab;
   tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === navTab ? 'page' : 'false'));
-  const body = { days: viewDays, analysis: viewAnalysis, records: viewAnalysis, tech: viewTech, eng: viewEng, notes: () => viewNotes(notePreset), chat: viewChat, ask: viewAsk }[S.tab] || viewDays;
+  const body = { days: viewDays, analysis: viewAnalysis, records: viewAnalysis, tech: viewTech, eng: viewEng, data: viewData, notes: () => viewNotes(notePreset), chat: viewChat, ask: viewAsk }[S.tab] || viewDays;
   app.innerHTML = head() + body() + `<p class="muted small" style="text-align:center"><button class="link" id="logout">Αποσύνδεση</button></p>`;
   const m = document.getElementById('msgs'); if (m) m.scrollTop = m.scrollHeight;
+  if (S.tab === 'data') trBind();
 }
 
 /* ---------- events ---------- */
@@ -431,6 +807,10 @@ document.addEventListener('click', e => {
     if (t.dataset.kind === 'many') { const a = d[id] = d[id] || []; const i = a.indexOf(v); if (i >= 0) a.splice(i, 1); else a.push(v); t.setAttribute('aria-pressed', String(i < 0)); }
     else { d[id] = v; document.querySelectorAll(`[data-ask="${id}"]`).forEach(b => b.setAttribute('aria-pressed', String(b === t))); }
   }
+  else if (t.dataset.trace) { S.dataId = t.dataset.trace; S.dataTab = 'td'; S.tab = 'data'; trLoad(S.dataId); render(); window.scrollTo(0, 0); }
+  else if (t.dataset.trtab) { S.dataTab = t.dataset.trtab; render(); }
+  else if (t.dataset.trlap) { trLap(+t.dataset.trlap); render(); }
+  else if (t.dataset.trch) { const k = t.dataset.trch, c = trChans(), n = c.includes(k) ? c.filter(x => x !== k) : c.concat(k); LS.set('scc-tr-ch', n.length ? n : ['spd']); render(); }
   else if (t.id === 'more') { S.days += 12; render(); }
   else if (t.id === 'refresh') load();
   else if (t.id === 'logout') { Auth.out(); render(); }
