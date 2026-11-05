@@ -140,6 +140,9 @@ nav.tabs button[aria-current="page"] { color: var(--pit); background: #10272a; }
 .tr-zoom span { font-size: 13px; color: var(--ink2); margin-right: 3px; }
 .tr-zoom .chip { min-height: 30px; min-width: 34px; padding: 0 9px; font-size: 13.5px; }
 .tr-chip.ext b { color: #c9a2ff; }
+.tr-extrow { margin-top: 8px; align-items: center; }
+.tr-exth { flex: none; font-size: 13px; color: #7fdcff; margin-right: 2px; }
+.tr-chip.pick b { color: var(--pit); }
 
 /* TR-CSS:end */
 </style>
@@ -326,7 +329,7 @@ const TR = (() => {
     S.theo = S.best.reduce((x, y) => x + y, 0);
     // rolling best: one lap's worth of sectors in a row, across lap ends, over laps driven one after another
     let roll = null;
-    const seq = []; rows.forEach((r, ri) => r.split.forEach((v, k) => seq.push({ v, ri, k, n: r.lap.n })));
+    const seq = []; rows.forEach((r, ri) => !r.lap.ext && r.split.forEach((v, k) => seq.push({ v, ri, k, n: r.lap.n })));
     for (let s0 = 0; s0 + nS <= seq.length; s0++) {
       let sum = 0, ok = true;
       for (let j = s0; j < s0 + nS; j++) { sum += seq[j].v; if (j > s0 && seq[j].n - seq[j - 1].n > 1) ok = false; }
